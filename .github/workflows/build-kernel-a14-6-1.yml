@@ -1,8 +1,8 @@
-name: 编译内核a14-6-1
+name: 编译内核A14-6.1
 
 permissions:
-  contents: write  # Allow writing to repository contents (for pushing tags)
-  actions: write   # Allows triggering actions
+  contents: write
+  actions: write
   
 on:
   workflow_dispatch:
@@ -22,31 +22,52 @@ on:
         required: true
         type: choice
         options:
-          - Stable(标准)
-          - Dev(开发)
-          - Other(其他/指定)
-        default: Dev(开发)
+          - "Stable(标准)"
+          - "Dev(开发)"
+          - "Other(其他/指定)"
+        default: "Dev(开发)"
       version:
-        description: '自定义版本名(如6.1.93后面的字符/留空则使用默认版本号)'
-        required: false
+        description: "自定义版本名"
+        required: true
         type: string
-      use_zram:
-        description: '是否开启增加更多ZRAM算法?'
+        default: "-android14-11-gca0ef6d17716-ab13624819"
+      build_time:
+        description: "设置内核构建时间"
+        required: true
+        type: string
+        default: "Tue Jun 10 18:59:08 UTC 2025"
+      lz4_upd:
+        description: "lz4 1.10.0"
         required: true
         type: boolean
         default: true
-      use_kpm:
-        description: '是否开启KPM功能?'
+      ssg_io:
+        description: "三星SSG I/O调度器"
         required: true
         type: boolean
         default: true
-      get_manager:
-        description: '是否同时获取最新KSU管理器?（实验性功能，报错请关闭）'
+      rekernel_enable:
+        description: "Re:Kernel支持"
         required: true
         type: boolean
         default: true
-jobs:
+      use_O3:
+        description: "O3编译优化"
+        required: true
+        type: boolean
+        default: true
+      BBG:
+        description: "BBG防格机补丁"
+        required: true
+        type: boolean
+        default: true
+      more_zram_kpm:
+        description: "更多ZRAM算法 && KPM功能"
+        required: false
+        type: boolean
+        default: false
 
+jobs:
   build-kernel-a14-6-1:
     uses: ./.github/workflows/kernel-a14-6.1.yml
     secrets: inherit
@@ -55,12 +76,10 @@ jobs:
       kernelsu_variant: ${{ inputs.kernelsu_variant }}
       kernelsu_branch: ${{ inputs.kernelsu_branch }}
       version: ${{ inputs.version }}
-      use_zram: ${{ inputs.use_zram }}
-      use_kpm: ${{ inputs.use_kpm }}
-  get-ksu-manager:
-    if: ${{ inputs.get_manager }}
-    uses: ./.github/workflows/get-manager.yml
-    secrets: inherit
-    with:
-      kernelsu_variant: ${{ inputs.kernelsu_variant }}
-
+      build_time: ${{ inputs.build_time }}
+      lz4_upd: ${{ inputs.lz4_upd }}
+      ssg_io: ${{ inputs.ssg_io }}
+      rekernel_enable: ${{ inputs.rekernel_enable }}
+      use_O3: ${{ inputs.use_O3 }}
+      BBG: ${{ inputs.BBG }}
+      more_zram_kpm: ${{ inputs.more_zram_kpm }}
