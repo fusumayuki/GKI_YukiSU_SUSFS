@@ -17,83 +17,71 @@ on:
       kernelsu_branch:
         required: true
         type: string
-        default: Stable
+        default: Dev
       version:
-        required: false
+        description: "自定义版本名"
+        required: true
         type: string
-        default: ""
-      use_zram:
-        description: '是否开启增加更多ZRAM算法?'
+        default: "-android14-11-gca0ef6d17716-ab13624819"
+      build_time:
+        description: '设置内核构建时间'
+        required: true
+        type: string
+        default: "Tue Jun 10 18:59:08 UTC 2025"
+      lz4_upd:
+        description: 'lz4 1.10.0'
         required: true
         type: boolean
         default: true
-      use_kpm:
-        description: '是否开启KPM功能?'
+      ssg_io:
+        description: '三星SSG I/O调度器'
+        required: true
+        type: boolean
+        default: true
+      rekernel_enable:
+        description: 'Re:Kernel支持'
+        required: true
+        type: boolean
+        default: true
+      use_O3:
+        description: 'O3编译优化'
         required: true
         type: boolean
         default: true
       BBG:
-        description: '是否启用内核层面阻止对关键分区/设备节点的非法写入(LSM)？'
+        description: 'BBG防格机补丁'
         required: true
         type: boolean
+        default: true
+      more_zram_kpm:
+        description: '更多ZRAM算法 && KPM功能'
+        required: false
+        type: boolean
         default: false
-
+        
 jobs:
   build-kernel-a14-6-1-kernelsu-susfs:
     strategy:
       fail-fast: false
       matrix:
         include:
-          #- sub_level: "25"
-          #  os_patch_level: "2023-10"
-          #- sub_level: "43"
-          #  os_patch_level: "2023-11"
-          #- sub_level: "57"
-          #  os_patch_level: "2024-01"
-          #- sub_level: "68"
-          #  os_patch_level: "2024-03"
-          #- sub_level: "75"
-          #  os_patch_level: "2024-05"
-          - sub_level: "78"
-            os_patch_level: "2024-06"
-          #- sub_level: "84"
-          #  os_patch_level: "2024-07"
-          - sub_level: "90"
-            os_patch_level: "2024-08"
-          #- sub_level: "93"
-          #  os_patch_level: "2024-09"
-          - sub_level: "99"
-            os_patch_level: "2024-10"
-          #- sub_level: "112"
-          #  os_patch_level: "2024-11"
-          #- sub_level: "115"
-          #  os_patch_level: "2024-12"
-          #- sub_level: "118"
-          #  os_patch_level: "2025-01"
-          - sub_level: "124"
-            os_patch_level: "2025-02"
-          #- sub_level: "128"
-          #  os_patch_level: "2025-03"
-          #- sub_level: "129"
-          #  os_patch_level: "2025-04"
-          #- sub_level: "134"
-          #  os_patch_level: "2025-05"
-          - sub_level: "145"
-            os_patch_level: "2025-09"
-          #- sub_level: "X"
-          #  os_patch_level: "lts"
+          - sub_level: "118"
+            os_patch_level: "2025-01"
     uses: ./.github/workflows/gki-kernel.yml
     secrets: inherit
     with:
-      make_release: ${{ inputs.make_release || false }}
+      make_release: ${{ inputs.make_release }}
       android_version: "android14"
       kernel_version: "6.1"
       sub_level: ${{ matrix.sub_level }}
       os_patch_level: ${{ matrix.os_patch_level }}
-      kernelsu_variant: ${{ inputs.kernelsu_variant || 'Next' }}
-      kernelsu_branch: ${{ inputs.kernelsu_branch || 'Dev' }}
-      version: ${{ inputs.version || '' }}
-      use_zram: ${{ inputs.use_zram }}
-      use_kpm: ${{ inputs.use_kpm }}
-      supp_op: ${{ inputs.supp_op || false }}
-      BBG: ${{ inputs.BBG || false }}
+      kernelsu_variant: ${{ inputs.kernelsu_variant }}
+      kernelsu_branch: ${{ inputs.kernelsu_branch }}
+      version: ${{ inputs.version }}
+      build_time: ${{ inputs.build_time }}
+      lz4_upd: ${{ inputs.lz4_upd }}
+      ssg_io: ${{ inputs.ssg_io }}
+      rekernel_enable: ${{ inputs.rekernel_enable }}
+      use_O3: ${{ inputs.use_O3 }}
+      BBG: ${{ inputs.BBG }}
+      more_zram_kpm: ${{ inputs.more_zram_kpm }}
